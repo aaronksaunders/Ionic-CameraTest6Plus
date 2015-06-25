@@ -57,3 +57,39 @@ toBase64Image: function (img_path) {
 ```
 
 See [PhoneGap-Image-Resizer Plugin](https://github.com/timkalinowski/PhoneGap-Image-Resizer) for additional information on the parameters
+
+##TODO
+
+* Submit Pull Request for Plugin to be able to convert image using code below `imageToBase64` along with other options
+* Submit PR for plugin to create thumbnail from image and maintain aspect ratio... it might be there, but cannot make sense of documentation
+
+This is the mod for the plugin to just do a base64 conversion in IOS/Objective-C; need to include code for Android/Java
+```Objective-C
+- (void) imageToBase64:(CDVInvokedUrlCommand*)command {
+    NSDictionary *options = [command.arguments objectAtIndex:0];
+
+    NSInteger quality = [[options objectForKey:@"quality"] integerValue];
+    NSString *format =  [options objectForKey:@"format"];
+
+    UIImage * img = [self getImageUsingOptions:options];
+
+    NSData* imageDataObject = nil;
+    if ([format isEqualToString:@"jpg"]) {
+        imageDataObject = UIImageJPEGRepresentation(img, (quality/100.f));
+    } else {
+        imageDataObject = UIImagePNGRepresentation(img);
+    }
+
+    NSString *encodedString = [imageDataObject base64EncodingWithLineLength:0];
+    NSDictionary* result = [NSDictionary dictionaryWithObjects:[NSArray arrayWithObjects:encodedString, nil] forKeys:[NSArray arrayWithObjects: @"imageData",nil]];
+
+    if (encodedString != nil) {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:result];
+    } else {
+        pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR];
+    }
+
+    [self.commandDelegate sendPluginResult:pluginResult callbackId:command.callbackId];
+
+}
+```
