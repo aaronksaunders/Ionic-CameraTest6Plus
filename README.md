@@ -1,5 +1,9 @@
 # Ionic-CameraTest iPhone6 Plus
 
+See blog post on project for additional information
+http://www.clearlyinnovative.com/ionic-framework-camera-image-uploads-and-base64-strings/
+
+-
 Was having issues with the cordova camera plugin and iphone 6 plus where the memory was causing issue when using data_url with base64 strings for manipulating images.
 
 We are using base64 images because of the integration with the Parse Javascript API.
