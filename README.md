@@ -64,6 +64,11 @@ toBase64Image: function (img_path) {
 
 See [PhoneGap-Image-Resizer Plugin](https://github.com/timkalinowski/PhoneGap-Image-Resizer) for additional information on the parameters
 
+
+## Ionic Video Series - Subscribe on YouTube Channel
+[![http://www.clearlyinnovative.com/wp-content/uploads/2015/07/blog-cover-post-2.jpg](http://www.clearlyinnovative.com/wp-content/uploads/2015/07/blog-cover-post-2.jpg)](https://www.youtube.com/channel/UCMCcqbJpyL3LAv3PJeYz2bg?sub_confirmation=1)
+
+
 ##TODO
 
 * Submit Pull Request for Plugin to be able to convert image using code below `imageToBase64` along with other options
