@@ -12,6 +12,8 @@ We are using base64 images because of the integration with the Parse Javascript 
 
 I have used the [PhoneGap-Image-Resizer Plugin](https://github.com/timkalinowski/PhoneGap-Image-Resizer) to convert the photo from the data file to a base64 string for a thumbnail image and then used the same plugin to convert the data file to a base64 String to save in parse
 
+You will also need to install the [ActionSheet Plugin](https://github.com/EddyVerbruggen/cordova-plugin-actionsheet) to get the sample code in this project working correctly
+
 ```Javascript
 /**
  *
