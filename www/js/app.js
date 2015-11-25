@@ -46,7 +46,7 @@ angular.module('starter', ['ionic'])
 
         $scope.getPhoto = function () {
             var options = {
-                'buttonLabels': ['Take Picture'],
+                'buttonLabels': ['Take Picture', 'Select From Gallery'],
                 'addCancelButtonWithLabel': 'Cancel'
             };
             window.plugins.actionsheet.show(options, callback);
@@ -76,6 +76,27 @@ angular.module('starter', ['ionic'])
                     $scope.newPhoto = false;
                     alert(err);
                 });
+            } else if (buttonIndex === 2) {
+
+                var picOptions = {
+                    destinationType: navigator.camera.DestinationType.FILE_URI,
+                    quality: 75,
+                    targetWidth: 500,
+                    targetHeight: 500,
+                    sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY
+                };
+
+
+                Camera.getPictureFromGallery(picOptions).then(function (imageURI) {
+                    console.log(imageURI);
+                    $scope.lastPhoto = imageURI;
+                    $scope.newPhoto = true;
+
+                }, function (err) {
+                    console.log(err);
+                    $scope.newPhoto = false;
+                    alert(err);
+                });
             }
 
         };
@@ -85,6 +106,20 @@ angular.module('starter', ['ionic'])
     .factory('Camera', ['$q', function ($q) {
 
         return {
+
+            getPictureFromGallery: function (options) {
+                var q = $q.defer();
+
+                navigator.camera.getPicture(function (result) {
+                    // Do any magic you need
+                    q.resolve(result);
+                }, function (err) {
+                    q.reject(err);
+                }, options);
+
+                return q.promise;
+            },
+
             /**
              *
              * @param options
