@@ -6,13 +6,45 @@ See blog post on project for additional information
 http://www.clearlyinnovative.com/ionic-framework-camera-image-uploads-and-base64-strings/
 
 -
+Install everything by using the command `ionic state restore` you should see something like the content below
+
+```Console
+IMac27Quad:Ionic-CameraTest6Plus aaronksaunders$ ionic state restore
+Attempting to restore your Ionic application from package.json
+
+Restoring Platforms
+
+cordova platform add ios
+
+Restore platforms is complete
+
+Restoring Plugins
+
+cordova plugin add cordova-plugin-device
+cordova plugin add cordova-plugin-console
+cordova plugin add cordova-plugin-whitelist
+cordova plugin add cordova-plugin-splashscreen
+cordova plugin add com.ionic.keyboard
+cordova plugin add cordova-plugin-camera
+cordova plugin add https://github.com/EddyVerbruggen/cordova-plugin-actionsheet 
+cordova plugin add https://github.com/timkalinowski/PhoneGap-Image-Resizer 
+cordova plugin add cordova-plugin-file
+Restore plugins is complete
+
+Ionic state restore completed
+
+IMac27Quad:Ionic-CameraTest6Plus aaronksaunders$ 
+
+```
+-
 Was having issues with the cordova camera plugin and iphone 6 plus where the memory was causing issue when using data_url with base64 strings for manipulating images.
 
 We are using base64 images because of the integration with the Parse Javascript API.
 
 I have used the [PhoneGap-Image-Resizer Plugin](https://github.com/timkalinowski/PhoneGap-Image-Resizer) to convert the photo from the data file to a base64 string for a thumbnail image and then used the same plugin to convert the data file to a base64 String to save in parse
 
-You will also need to install the [ActionSheet Plugin](https://github.com/EddyVerbruggen/cordova-plugin-actionsheet) to get the sample code in this project working correctly
+You will also need to install the [ActionSheet Plugin](https://github.com/EddyVerbruggen/cordova-plugin-actionsheet) to get the sample code in this project working correctly.
+
 
 ```Javascript
 /**
