@@ -36,6 +36,15 @@ Ionic state restore completed
 IMac27Quad:Ionic-CameraTest6Plus aaronksaunders$ 
 
 ```
+
+If you see this error
+```Console
+Plugin doesn't support this project's cordova-android version. cordova-android: 4.1.1, failed version requirement: >=5.0.0-dev
+```
+Then you will need to update the version of Cordova using the following command
+```Console
+cordova platform update android@5.0.0
+```
 -
 Was having issues with the cordova camera plugin and iphone 6 plus where the memory was causing issue when using data_url with base64 strings for manipulating images.
 
