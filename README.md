@@ -54,6 +54,8 @@ To address the issues, I have downloaded the version of the parse library and in
 <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com https://api.parse.com; style-src 'self' 'unsafe-inline'; media-src *">
 ```
 -
+###Saving Images to File and Base64 Conversion
+
 Was having issues with the cordova camera plugin and iphone 6 plus where the memory was causing issue when using data_url with base64 strings for manipulating images.
 
 We are using base64 images because of the integration with the Parse Javascript API.
@@ -115,6 +117,50 @@ toBase64Image: function (img_path) {
 
 See [PhoneGap-Image-Resizer Plugin](https://github.com/timkalinowski/PhoneGap-Image-Resizer) for additional information on the parameters
 
+###Supporting File Uploads To Parse
+What we are doing here is creating a parse object called ImageInfo to store the file reference and any additional information on the file we want to save.
+
+First step is to create the parse file object using the base64 version of the file, then add the file object to the ImageInfo object and save that... All done!!
+
+See the code in `js/parseService.js`
+
+```Javascript
+/**
+ * file js/parseService.js
+ *
+ * @param _params.photo base64 representation of photo
+ * @param _params.caption string to go with photo
+ * @returns {*}
+ */
+savePhotoToParse: function (_params) {
+    var ImageObject = Parse.Object.extend("ImageInfo");
+
+    // create the parse file object using base64 representation of photo
+    var imageFile = new Parse.File("mypic.jpg", {base64: _params.photo});
+
+
+    // save the parse file object
+    return imageFile.save().then(function () {
+
+        _params.photo = null;
+
+        // create object to hold caption and file reference
+        var imageObject = new ImageObject();
+
+        // set object properties
+        imageObject.set("caption", _params.caption);
+        imageObject.set("picture", imageFile);
+
+        // save object to parse backend
+        return imageObject.save();
+
+    }, function (error) {
+        alert("Error " + JSON.stringify(error, null, 2));
+        console.log(error);
+    });
+
+}
+```
 
 ## Ionic Video Series - Subscribe on YouTube Channel
 [![http://www.clearlyinnovative.com/wp-content/uploads/2015/07/blog-cover-post-2.jpg](http://www.clearlyinnovative.com/wp-content/uploads/2015/07/blog-cover-post-2.jpg)](https://www.youtube.com/channel/UCMCcqbJpyL3LAv3PJeYz2bg?sub_confirmation=1)
