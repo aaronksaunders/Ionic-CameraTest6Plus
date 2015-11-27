@@ -6,6 +6,8 @@ See blog post on project for additional information
 http://www.clearlyinnovative.com/ionic-framework-camera-image-uploads-and-base64-strings/
 
 -
+###Getting Started
+
 Install everything by using the command `ionic state restore` you should see something like the content below
 
 ```Console
@@ -44,6 +46,12 @@ Plugin doesn't support this project's cordova-android version. cordova-android: 
 Then you will need to update the version of Cordova using the following command
 ```Console
 cordova platform update android@5.0.0
+```
+
+###Whitelist Issues With Parse
+To address the issues, I have downloaded the version of the parse library and includeded it in the `lib` folder of the application. You will also need to updata the `Content-Security Policy` in the `index.html` file. Please see code below
+```HTML
+<meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com https://api.parse.com; style-src 'self' 'unsafe-inline'; media-src *">
 ```
 -
 Was having issues with the cordova camera plugin and iphone 6 plus where the memory was causing issue when using data_url with base64 strings for manipulating images.
