@@ -3,7 +3,7 @@
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
 // the 2nd parameter is an array of 'requires'
-angular.module('starter', ['ionic'])
+angular.module('starter', ['ionic', 'ParsePhotoService'])
 
     .run(function ($ionicPlatform) {
         $ionicPlatform.ready(function () {
@@ -17,91 +17,135 @@ angular.module('starter', ['ionic'])
             }
         });
     })
-
+    /**
+     * see documentation: https://www.parse.com/apps/quickstart#parse_data/web/existing
+     *
+     * SET THESE VALUES IF YOU WANT TO USE PARSE, COMMENT THEM OUT TO USE THE DEFAULT
+     * SERVICE
+     *
+     * parse constants
+     */
+    .value('ParseConfiguration', {
+        applicationId: "xxxxxxxxxxxxxxxx",
+        javascriptKey: "xxxxxxxxxxxxxxxx"
+    })
     .config(function ($compileProvider) {
         //    $compileProvider.imgSrcSanitizationWhitelist(/^\s*(https?|ftp|mailto|content|file|assets-library):/);
     })
 
-    .controller('MainCtrl', function ($scope, Camera) {
+    .controller('MainCtrl', function ($scope, Camera, ParsePhotoService) {
 
-        $scope.savePhoto = function () {
-            Camera.resizeImage($scope.lastPhoto).then(function (_result) {
-                $scope.thumb = "data:image/jpeg;base64," + _result.imageData;
+            /**
+             * make a thumbnail of the image
+             */
+            $scope.makeThumbNail = function () {
 
-                return Camera.toBase64Image($scope.lastPhoto);
-            }).then(function (_convertedBase64) {
-                console.log("convert base image ");
-            }, function (_error) {
-                console.log(_error);
-            });
-        };
+                if (!$scope.lastPhoto) {
+                    alert("Missing Photo");
+                    return;
+                }
 
-        $scope.___savePhoto = function () {
-            Camera.toBase64Image($scope.lastPhoto).then(function (_result) {
-                console.log("convert base image ");
-            }, function (_error) {
-                console.log(_error);
-            });
-        };
-
-        $scope.getPhoto = function () {
-            var options = {
-                'buttonLabels': ['Take Picture', 'Select From Gallery'],
-                'addCancelButtonWithLabel': 'Cancel'
+                Camera.resizeImage($scope.lastPhoto).then(function (_result) {
+                    $scope.thumb = "data:image/jpeg;base64," + _result.imageData;
+                }, function (_error) {
+                    console.log(_error);
+                });
             };
-            window.plugins.actionsheet.show(options, callback);
-        };
 
-        function callback(buttonIndex) {
-            console.log(buttonIndex);
-            if (buttonIndex === 1) {
+            /**
+             * save image to parse
+             */
+            $scope.savePhotoToParse = function () {
 
-                var picOptions = {
-                    destinationType: navigator.camera.DestinationType.FILE_URI,
-                    quality: 75,
-                    targetWidth: 500,
-                    targetHeight: 500,
-                    allowEdit: true,
-                    saveToPhotoAlbum: false
-                };
+                if (!$scope.lastPhoto) {
+                    alert("Missing Photo");
+                    return;
+                }
 
 
-                Camera.getPicture(picOptions).then(function (imageURI) {
-                    console.log(imageURI);
-                    $scope.lastPhoto = imageURI;
-                    $scope.newPhoto = true;
+                Camera.toBase64Image($scope.lastPhoto).then(function (_result) {
+                    var base64 = _result.imageData;
 
-                }, function (err) {
-                    console.log(err);
-                    $scope.newPhoto = false;
-                    alert(err);
+                    // make sure we are logged in
+                    ParsePhotoService.loginDefaultUser("admin", "password").then(function (_user) {
+                        // user is logged in, now save to parse
+                        return ParsePhotoService.savePhotoToParse({
+                            photo: base64,
+                            caption: "By User " + _user.get("username")
+                        });
+
+                    }).then(function (_savePhotoResult) {
+                        console.log("savePhotoToParse ", _savePhotoResult);
+
+                    }, function (_error) {
+                        console.log(_error);
+                        alert("savePhotoToParse " + JSON.stringify(_error, null, 2));
+                    });
                 });
-            } else if (buttonIndex === 2) {
+            };
 
-                var picOptions = {
-                    destinationType: navigator.camera.DestinationType.FILE_URI,
-                    quality: 75,
-                    targetWidth: 500,
-                    targetHeight: 500,
-                    sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY
+            /**
+             * display alert to choose where to get the image from
+             */
+            $scope.getPhoto = function () {
+                var options = {
+                    'buttonLabels': ['Take Picture', 'Select From Gallery'],
+                    'addCancelButtonWithLabel': 'Cancel'
                 };
+                window.plugins.actionsheet.show(options, callback);
+            };
+
+            function callback(buttonIndex) {
+                console.log(buttonIndex);
+                if (buttonIndex === 1) {
+
+                    var picOptions = {
+                        destinationType: navigator.camera.DestinationType.FILE_URI,
+                        quality: 75,
+                        targetWidth: 500,
+                        targetHeight: 500,
+                        allowEdit: true,
+                        saveToPhotoAlbum: false
+                    };
 
 
-                Camera.getPictureFromGallery(picOptions).then(function (imageURI) {
-                    console.log(imageURI);
-                    $scope.lastPhoto = imageURI;
-                    $scope.newPhoto = true;
+                    Camera.getPicture(picOptions).then(function (imageURI) {
+                        console.log(imageURI);
+                        $scope.lastPhoto = imageURI;
+                        $scope.newPhoto = true;
 
-                }, function (err) {
-                    console.log(err);
-                    $scope.newPhoto = false;
-                    alert(err);
-                });
-            }
+                    }, function (err) {
+                        console.log(err);
+                        $scope.newPhoto = false;
+                        alert(err);
+                    });
+                } else if (buttonIndex === 2) {
 
-        };
+                    var picOptions = {
+                        destinationType: navigator.camera.DestinationType.FILE_URI,
+                        quality: 75,
+                        targetWidth: 500,
+                        targetHeight: 500,
+                        sourceType: navigator.camera.PictureSourceType.PHOTOLIBRARY
+                    };
 
-    })
+
+                    Camera.getPictureFromGallery(picOptions).then(function (imageURI) {
+                        console.log(imageURI);
+                        $scope.lastPhoto = imageURI;
+                        $scope.newPhoto = true;
+
+                    }, function (err) {
+                        console.log(err);
+                        $scope.newPhoto = false;
+                        alert(err);
+                    });
+                }
+
+            };
+
+        }
+    )
 
     .factory('Camera', ['$q', function ($q) {
 
