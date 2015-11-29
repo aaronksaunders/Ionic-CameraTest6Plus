@@ -6,6 +6,9 @@ See blog post on project for additional information
 http://www.clearlyinnovative.com/ionic-framework-camera-image-uploads-and-base64-strings/
 
 -
+###Overview
+###Saving Image Captured from file or camera to Parse.com using the Parse Javascript API or the Parse REST API.
+
 ###Getting Started
 
 Install everything by using the command `ionic state restore` you should see something like the content below
