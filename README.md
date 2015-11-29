@@ -117,7 +117,7 @@ toBase64Image: function (img_path) {
 
 See [PhoneGap-Image-Resizer Plugin](https://github.com/timkalinowski/PhoneGap-Image-Resizer) for additional information on the parameters
 
-###Supporting File Uploads To Parse
+###Supporting File Uploads To Parse w/ Javascript API
 What we are doing here is creating a parse object called ImageInfo to store the file reference and any additional information on the file we want to save.
 
 First step is to create the parse file object using the base64 version of the file, then add the file object to the ImageInfo object and save that... All done!!
@@ -161,6 +161,75 @@ savePhotoToParse: function (_params) {
 
 }
 ```
+###Supporting File Uploads To Parse w/ REST API
+We are doing the exact same as above but using the REST API.
+
+To used the REST API, we need to add the `restAPIKey` to the `ParseConfiguration` in `app.js`
+```Javascript
+/**
+ * see documentation: https://www.parse.com/apps/quickstart#parse_data/web/existing
+ *
+ * SET THESE VALUES IF YOU WANT TO USE PARSE, COMMENT THEM OUT TO USE THE DEFAULT
+ * SERVICE
+ *
+ * parse constants
+ */
+.value('ParseConfiguration', {
+    applicationId: "QDd5uSoUe27KlqSwZso5mcgchaHkaDTAovxJeKFe",
+    javascriptKey: "jTqY3JLwfew3DqaaqrrpwdI1mTTXspYyj8U7dzQY",
+    restAPIKey: "v8qUu6FoT3lU2kFZx0Zvl3Ss5g1DjX6zngCpnMPY"
+})
+```
+Next in the `parseService.js` we will use the REST API as documented to first upload a file and then associate it to an image.
+
+First there is basic housekeeping to set up the headers and the base url for the REST API interactions.
+```Javascript
+var PARSE__HEADER_CREDENTIALS = {
+    "x-parse-application-id": ParseConfiguration.applicationId,
+    "x-parse-rest-api-key": ParseConfiguration.restAPIKey
+};
+
+var baseURL = "https://api.parse.com/1/";
+var authenticationHeaders = PARSE__HEADER_CREDENTIALS;
+```
+Then you will need to actually save the image, see the function below.
+```Javascript
+savePhotoToParse: function (_params) {
+
+    // for POST, we only need to set the authentication header
+    var settings = {
+        headers: authenticationHeaders
+    };
+    // for POST, we need to specify data to add, AND convert it to
+    // a string before passing it in as separate parameter data
+    var dataObject = {base64: _params.photo};
+
+    // $http returns a promise, which has a then function
+    return $http.post(baseURL + 'files/mypic.jpeg', dataObject, settings)
+        .then(function (response) {
+            // In the response resp.data contains the result
+            // check the console to see all of the data returned
+            console.log('savePhotoToParse', response);
+
+            // now save to ImageObject Class
+            return $http.post(baseURL + 'classes/ImageInfo', {
+                caption: _params.caption,
+                picture: {
+                    "name": response.data.name,
+                    "__type": "File"
+                }
+            }, settings);
+        }).then(function (_imageInfoResp) {
+            console.log(_imageInfoResp);
+            return _imageInfoResp.data;
+        }, function (_error) {
+            console.log("Error: ", _error);
+        });
+}
+```
+### More Information on Using Parse REST API
+[Click Here for Series on Ionic Framework Using Parse.com](https://github.com/aaronksaunders/hu1/wiki/3.3-Using-Parse.com-in-an-$http-Service)
+
 
 ## Ionic Video Series - Subscribe on YouTube Channel
 [![http://www.clearlyinnovative.com/wp-content/uploads/2015/07/blog-cover-post-2.jpg](http://www.clearlyinnovative.com/wp-content/uploads/2015/07/blog-cover-post-2.jpg)](https://www.youtube.com/channel/UCMCcqbJpyL3LAv3PJeYz2bg?sub_confirmation=1)
