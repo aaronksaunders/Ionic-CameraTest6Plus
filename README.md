@@ -178,9 +178,9 @@ To used the REST API, we need to add the `restAPIKey` to the `ParseConfiguration
  * parse constants
  */
 .value('ParseConfiguration', {
-    applicationId: "QDd5uSoUe27KlqSwZso5mcgchaHkaDTAovxJeKFe",
-    javascriptKey: "jTqY3JLwfew3DqaaqrrpwdI1mTTXspYyj8U7dzQY",
-    restAPIKey: "v8qUu6FoT3lU2kFZx0Zvl3Ss5g1DjX6zngCpnMPY"
+    applicationId: "YOUR-KEYS-HERE",
+    javascriptKey: "YOUR-KEYS-HERE",
+    restAPIKey: "YOUR-KEYS-HERE"
 })
 ```
 Next in the `parseService.js` we will use the REST API as documented to first upload a file and then associate it to an image.
